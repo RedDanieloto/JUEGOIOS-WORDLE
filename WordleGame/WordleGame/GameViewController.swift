@@ -3,7 +3,6 @@ import AVFoundation
 
 class GameViewController: UIViewController {
     
-    // Outlets para la interfaz
     @IBOutlet weak var heart1: UIImageView?
     @IBOutlet weak var heart2: UIImageView?
     @IBOutlet weak var heart3: UIImageView?
@@ -14,7 +13,6 @@ class GameViewController: UIViewController {
     @IBOutlet weak var musicButton: UIButton!
     @IBOutlet weak var exitButton: UIButton!
     
-    // Outlets para los botones del teclado
     @IBOutlet weak var buttonQ: UIButton!
     @IBOutlet weak var buttonW: UIButton!
     @IBOutlet weak var buttonE: UIButton!
@@ -55,7 +53,6 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("gridView: \(gridView)")
         configurarMusicaFondo()
         iniciarNuevoJuego()
         configurarTablero()
@@ -74,30 +71,21 @@ class GameViewController: UIViewController {
         super.viewWillAppear(animated)
         if musicaActivada, reproductorMusicaFondo != nil {
             reproductorMusicaFondo?.play()
-            print("Música de fondo reanudada al volver a la vista")
         }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         reproductorMusicaFondo?.pause()
-        print("Música de fondo pausada al salir de la vista")
     }
     
     func configurarMusicaFondo() {
-        guard let url = Bundle.main.url(forResource: "natanael", withExtension: "mp3") else {
-            print("Archivo de música de fondo natanael.mp3 no encontrado")
-            return
-        }
-        
+        guard let url = Bundle.main.url(forResource: "natanael", withExtension: "mp3") else { return }
         do {
             reproductorMusicaFondo = try AVAudioPlayer(contentsOf: url)
             reproductorMusicaFondo?.numberOfLoops = -1
             reproductorMusicaFondo?.play()
-            print("Música de fondo natanael.mp3 iniciada")
-        } catch {
-            print("Error al reproducir música de fondo: \(error)")
-        }
+        } catch {}
     }
     
     @objc func alternarMusica() {
@@ -105,27 +93,19 @@ class GameViewController: UIViewController {
         if musicaActivada {
             reproductorMusicaFondo?.play()
             musicButton.setImage(UIImage(systemName: "apple.haptics.and.music.note"), for: .normal)
-            print("Música activada")
         } else {
             reproductorMusicaFondo?.pause()
             musicButton.setImage(UIImage(systemName: "apple.haptics.and.music.note.slash"), for: .normal)
-            print("Música desactivada")
         }
     }
     
     @objc func salirDelJuego() {
-        print("Botón de salir presionado")
         temporizador?.invalidate()
         reproductorMusicaFondo?.pause()
-        
         if let navigationController = navigationController {
-            print("Regresando al menú principal con popToRootViewController")
             navigationController.popToRootViewController(animated: true)
         } else {
-            print("No hay navigationController, intentando dismiss")
-            dismiss(animated: true) {
-                print("GameViewController dismissed")
-            }
+            dismiss(animated: true, completion: nil)
         }
     }
     
@@ -137,7 +117,7 @@ class GameViewController: UIViewController {
         if !restablecerVidas {
             estadoJuego.lives = vidasActuales
         } else {
-            estadoJuego.lives = 3 // Asegúrate de que las vidas se inicialicen en 3
+            estadoJuego.lives = 3
         }
         if !restablecerRonda {
             estadoJuego.currentRound = rondaActual
@@ -146,22 +126,11 @@ class GameViewController: UIViewController {
         if restablecerVidas && restablecerRonda {
             puntuacionAcumulada = 0
         }
-        
-        print("estadoJuego inicializado: \(estadoJuego)")
         palabraActual = ""
     }
     
     func configurarTablero() {
-        guard let tablero = gridView else {
-            print("Error: gridView es nil. Por favor, revisa la conexión en el storyboard.")
-            return
-        }
-        
-        guard let estado = estadoJuego else {
-            print("Error: estadoJuego es nil. Asegúrate de inicializar estadoJuego antes de llamar a configurarTablero().")
-            return
-        }
-        
+        guard let tablero = gridView, let estado = estadoJuego else { return }
         tablero.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         tablero.axis = .vertical
@@ -193,8 +162,6 @@ class GameViewController: UIViewController {
             }
             tablero.addArrangedSubview(filaStackView)
         }
-        
-        print("Tablero poblado con \(tablero.arrangedSubviews.count) filas")
     }
     
     func configurarTeclado() {
@@ -220,19 +187,14 @@ class GameViewController: UIViewController {
                     boton.tag = 101
                 }
                 boton.addTarget(self, action: #selector(teclaPresionada(_:)), for: .touchUpInside)
-                print("Botón \(etiquetasBotones[indice]) (índice \(indice)) conectado: \(boton) con tag: \(boton.tag)")
-            } else {
-                print("Botón \(etiquetasBotones[indice]) (índice \(indice)) es nil")
             }
         }
     }
     
     @objc func teclaPresionada(_ sender: UIButton) {
-        print("Botón presionado con tag: \(sender.tag)")
-        
         let tag = sender.tag
-        
         let tecla: String
+        
         switch tag {
         case 1: tecla = "Q"
         case 2: tecla = "W"
@@ -263,28 +225,18 @@ class GameViewController: UIViewController {
         case 27: tecla = "M"
         case 100: tecla = "⌫"
         case 101: tecla = "⏎"
-        default:
-            print("Tag desconocido: \(tag)")
-            return
+        default: return
         }
-        
-        print("Tecla presionada: \(tecla)")
         
         if tecla == "⌫" {
             if !palabraActual.isEmpty {
                 palabraActual.removeLast()
-                print("Última letra borrada. Palabra actual: \(palabraActual)")
             }
         } else if tecla == "⏎" {
-            print("Enviando intento: \(palabraActual)")
             enviarIntento()
         } else if palabraActual.count < estadoJuego.wordLength {
             palabraActual += tecla
-            print("Añadida \(tecla). Palabra actual: \(palabraActual)")
-        } else {
-            print("No se puede añadir \(tecla). Límite de longitud alcanzado: \(palabraActual)")
         }
-        
         actualizarInterfaz()
     }
     
@@ -307,9 +259,7 @@ class GameViewController: UIViewController {
             finalizarRonda()
         } else if estadoJuego.currentGuess >= estadoJuego.maxGuessesPerRound {
             reproducirSonido("error")
-            print("Intentos agotados. Quitando una vida. Vidas restantes: \(estadoJuego.lives - 1)")
             estadoJuego.lives -= 1
-            print("Vidas después de reducir: \(estadoJuego.lives)")
             estadoJuego.isGameOver = true
             finalizarRonda()
         }
@@ -324,9 +274,7 @@ class GameViewController: UIViewController {
             self.estadoJuego.timeRemaining -= 1
             self.actualizarInterfaz()
             if self.estadoJuego.timeRemaining <= 0 {
-                print("Tiempo agotado. Quitando una vida. Vidas restantes: \(self.estadoJuego.lives - 1)")
                 self.estadoJuego.lives -= 1
-                print("Vidas después de reducir: \(self.estadoJuego.lives)")
                 self.estadoJuego.isGameOver = true
                 self.finalizarRonda()
             }
@@ -335,13 +283,10 @@ class GameViewController: UIViewController {
     
     func finalizarRonda() {
         temporizador?.invalidate()
-        
         let puntuacionRonda = (estadoJuego.timeRemaining * 10) + (estadoJuego.currentRound * 100)
         puntuacionAcumulada += puntuacionRonda
         
-        print("Finalizando ronda. Vidas restantes: \(estadoJuego.lives)")
         if estadoJuego.lives <= 0 {
-            print("Llamando a mostrarFinJuego con puntuación: \(puntuacionAcumulada)")
             mostrarFinJuego(puntuacion: puntuacionAcumulada)
         } else {
             mostrarResultadoRonda()
@@ -371,35 +316,27 @@ class GameViewController: UIViewController {
     }
     
     func mostrarFinJuego(puntuacion: Int) {
-        print("Mostrando fin de juego con puntuación: \(puntuacion)")
         var records = cargarRecords()
-        print("Records actuales: \(records)")
-        
         if records.count < 5 || puntuacion > records.last!.puntuacion {
-            print("Puntuación entra en el Top 5. Pidiendo nombre...")
             let alerta = UIAlertController(title: "¡Nuevo Récord!", message: "Has entrado en el Top 5 con \(puntuacion) puntos. Ingresa tu nombre:", preferredStyle: .alert)
             alerta.addTextField { textField in
                 textField.placeholder = "Tu nombre"
             }
             let accionGuardar = UIAlertAction(title: "Guardar", style: .default) { _ in
                 let nombre = alerta.textFields?.first?.text ?? "Jugador"
-                print("Guardando récord para \(nombre) con puntuación \(puntuacion)")
                 records.append(Record(nombre: nombre, puntuacion: puntuacion))
                 records.sort { $0.puntuacion > $1.puntuacion }
                 records = Array(records.prefix(5))
                 self.guardarRecords(records)
-                print("Records actualizados: \(records)")
                 self.regresarAlMenuPrincipal()
             }
             let accionCancelar = UIAlertAction(title: "Cancelar", style: .cancel) { _ in
-                print("Usuario canceló el ingreso del nombre")
                 self.regresarAlMenuPrincipal()
             }
             alerta.addAction(accionGuardar)
             alerta.addAction(accionCancelar)
             present(alerta, animated: true)
         } else {
-            print("Puntuación no entra en el Top 5. Mostrando mensaje de fin de juego.")
             let alerta = UIAlertController(title: "Juego Terminado", message: "Te quedaste sin vidas. Rondas alcanzadas: \(self.estadoJuego.currentRound). Puntuación: \(puntuacion)", preferredStyle: .alert)
             alerta.addAction(UIAlertAction(title: "Volver al Menú", style: .default) { _ in
                 self.regresarAlMenuPrincipal()
@@ -409,67 +346,27 @@ class GameViewController: UIViewController {
     }
     
     func regresarAlMenuPrincipal() {
-        print("Intentando regresar al menú principal")
         if let navigationController = navigationController {
-            print("Regresando al menú principal con popToRootViewController")
             navigationController.popToRootViewController(animated: true)
         } else {
-            print("No hay navigationController, intentando dismiss")
-            dismiss(animated: true) {
-                print("GameViewController dismissed")
-            }
+            dismiss(animated: true, completion: nil)
         }
     }
     
     func actualizarInterfaz() {
-        guard let estadoJuego = estadoJuego else {
-            print("Error: estadoJuego es nil")
-            return
-        }
+        guard let estadoJuego = estadoJuego else { return }
         
-        if let heart1 = heart1 {
-            heart1.image = estadoJuego.lives >= 1 ? UIImage(named: "corazon") : UIImage(named: "blackheart")
-        } else {
-            print("Error: heart1 no está conectado")
-        }
+        heart1?.image = estadoJuego.lives >= 1 ? UIImage(named: "corazon") : UIImage(named: "blackheart")
+        heart2?.image = estadoJuego.lives >= 2 ? UIImage(named: "corazon") : UIImage(named: "blackheart")
+        heart3?.image = estadoJuego.lives >= 3 ? UIImage(named: "corazon") : UIImage(named: "blackheart")
         
-        if let heart2 = heart2 {
-            heart2.image = estadoJuego.lives >= 2 ? UIImage(named: "corazon") : UIImage(named: "blackheart")
-        } else {
-            print("Error: heart2 no está conectado")
-        }
-        
-        if let heart3 = heart3 {
-            heart3.image = estadoJuego.lives >= 3 ? UIImage(named: "corazon") : UIImage(named: "blackheart")
-        } else {
-            print("Error: heart3 no está conectado")
-        }
-        
-        if let roundLabel = roundLabel {
-            roundLabel.text = "Ronda: \(estadoJuego.currentRound)"
-        } else {
-            print("Error: roundLabel no está conectado")
-        }
-        
-        if let timerLabel = timerLabel {
-            timerLabel.text = "Tiempo: \(estadoJuego.timeRemaining)s"
-        } else {
-            print("Error: timerLabel no está conectado")
-        }
+        roundLabel?.text = "Ronda: \(estadoJuego.currentRound)"
+        timerLabel?.text = "Tiempo: \(estadoJuego.timeRemaining)s"
         
         let puntuacionRonda = (estadoJuego.timeRemaining * 10) + (estadoJuego.currentRound * 100)
-        if let scoreLabel = scoreLabel {
-            scoreLabel.text = "Puntuación: \(puntuacionAcumulada + puntuacionRonda)"
-        } else {
-            print("Error: scoreLabel no está conectado")
-        }
+        scoreLabel?.text = "Puntuación: \(puntuacionAcumulada + puntuacionRonda)"
         
-        guard let tablero = gridView, !tablero.arrangedSubviews.isEmpty else {
-            print("Tablero es nil o está vacío, omitiendo actualización del tablero")
-            return
-        }
-        
-        print("Actualizando interfaz con palabraActual: \(palabraActual)")
+        guard let tablero = gridView, !tablero.arrangedSubviews.isEmpty else { return }
         
         for fila in 0..<estadoJuego.maxGuessesPerRound {
             let filaStackView = tablero.arrangedSubviews[fila] as! UIStackView
@@ -479,7 +376,6 @@ class GameViewController: UIViewController {
                     let letra = String(palabraActual[palabraActual.index(palabraActual.startIndex, offsetBy: columna)])
                     etiqueta.text = letra
                     etiqueta.backgroundColor = .lightGray
-                    print("Colocando letra \(letra) en fila \(fila), columna \(columna)")
                 } else if fila < estadoJuego.currentGuess {
                     let letra = estadoJuego.guesses[fila].letters[columna]
                     etiqueta.text = letra.character
@@ -541,17 +437,11 @@ class GameViewController: UIViewController {
     }
     
     func reproducirSonido(_ nombreArchivo: String) {
-        guard let url = Bundle.main.url(forResource: nombreArchivo, withExtension: "mp3") else {
-            print("Archivo de sonido \(nombreArchivo) no encontrado")
-            return
-        }
-        
+        guard let url = Bundle.main.url(forResource: nombreArchivo, withExtension: "mp3") else { return }
         do {
             reproductorSonido = try AVAudioPlayer(contentsOf: url)
             reproductorSonido?.play()
-        } catch {
-            print("Error al reproducir sonido: \(error)")
-        }
+        } catch {}
     }
     
     func obtenerRutaPlist() -> URL {
@@ -561,17 +451,10 @@ class GameViewController: UIViewController {
     
     func cargarRecords() -> [Record] {
         let ruta = obtenerRutaPlist()
-        
         if !FileManager.default.fileExists(atPath: ruta.path) {
             if let rutaBundle = Bundle.main.url(forResource: "Records", withExtension: "plist") {
-                do {
-                    try FileManager.default.copyItem(at: rutaBundle, to: ruta)
-                    print("Archivo Records.plist copiado desde el bundle al directorio de documentos")
-                } catch {
-                    print("Error al copiar Records.plist desde el bundle: \(error)")
-                }
+                try? FileManager.default.copyItem(at: rutaBundle, to: ruta)
             } else {
-                print("No se encontró Records.plist en el bundle")
                 let recordsIniciales = [
                     Record(nombre: "Jugador 1", puntuacion: 1000),
                     Record(nombre: "Jugador 2", puntuacion: 800),
@@ -586,10 +469,9 @@ class GameViewController: UIViewController {
             }
         }
         
-        if let datos = try? Data(contentsOf: ruta) {
-            if let recordsCargados = try? PropertyListDecoder().decode([Record].self, from: datos) {
-                return recordsCargados
-            }
+        if let datos = try? Data(contentsOf: ruta),
+           let recordsCargados = try? PropertyListDecoder().decode([Record].self, from: datos) {
+            return recordsCargados
         }
         
         let recordsIniciales = [
