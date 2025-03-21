@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+    <dict>
+        <key>nombre</key>
+        <string>Jugador 1</string>
+        <key>puntuacion</key>
+        <integer>1000</integer>
+    </dict>
+    <dict>
+        <key>nombre</key>
+        <string>Jugador 2</string>
+        <key>puntuacion</key>
+        <integer>800</integer>
+    </dict>
+    <dict>
+        <key>nombre</key>
+        <string>Jugador 3</string>
+        <key>puntuacion</key>
+        <integer>600</integer>
+    </dict>
+    <dict>
+        <key>nombre</key>
+        <string>Jugador 4</string>
+        <key>puntuacion</key>
+        <integer>400</integer>
+    </dict>
+    <dict>
+        <key>nombre</key>
+        <string>Jugador 5</string>
+        <key>puntuacion</key>
+        <integer>200</integer>
+    </dict>
+</array>
+</plist>

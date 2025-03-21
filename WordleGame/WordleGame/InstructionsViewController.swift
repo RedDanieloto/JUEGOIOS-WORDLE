@@ -4,9 +4,8 @@ class InstructionsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Configuración adicional si es necesaria
     }
     
-    @IBAction func playButtonTapped(_ sender: UIButton) {
-        performSegue(withIdentifier: "toGameFromInstructions", sender: nil)
-    }
+
 }
