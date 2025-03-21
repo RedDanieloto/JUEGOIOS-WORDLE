@@ -114,9 +114,19 @@ class GameViewController: UIViewController {
     }
     
     @objc func salirDelJuego() {
+        print("Botón de salir presionado")
         temporizador?.invalidate()
         reproductorMusicaFondo?.pause()
-        navigationController?.popToRootViewController(animated: true)
+        
+        if let navigationController = navigationController {
+            print("Regresando al menú principal con popToRootViewController")
+            navigationController.popToRootViewController(animated: true)
+        } else {
+            print("No hay navigationController, intentando dismiss")
+            dismiss(animated: true) {
+                print("GameViewController dismissed")
+            }
+        }
     }
     
     func iniciarNuevoJuego(restablecerVidas: Bool = true, restablecerRonda: Bool = true) {
@@ -126,6 +136,8 @@ class GameViewController: UIViewController {
         estadoJuego = GameState()
         if !restablecerVidas {
             estadoJuego.lives = vidasActuales
+        } else {
+            estadoJuego.lives = 3 // Asegúrate de que las vidas se inicialicen en 3
         }
         if !restablecerRonda {
             estadoJuego.currentRound = rondaActual
@@ -297,6 +309,7 @@ class GameViewController: UIViewController {
             reproducirSonido("error")
             print("Intentos agotados. Quitando una vida. Vidas restantes: \(estadoJuego.lives - 1)")
             estadoJuego.lives -= 1
+            print("Vidas después de reducir: \(estadoJuego.lives)")
             estadoJuego.isGameOver = true
             finalizarRonda()
         }
@@ -313,6 +326,7 @@ class GameViewController: UIViewController {
             if self.estadoJuego.timeRemaining <= 0 {
                 print("Tiempo agotado. Quitando una vida. Vidas restantes: \(self.estadoJuego.lives - 1)")
                 self.estadoJuego.lives -= 1
+                print("Vidas después de reducir: \(self.estadoJuego.lives)")
                 self.estadoJuego.isGameOver = true
                 self.finalizarRonda()
             }
@@ -325,7 +339,9 @@ class GameViewController: UIViewController {
         let puntuacionRonda = (estadoJuego.timeRemaining * 10) + (estadoJuego.currentRound * 100)
         puntuacionAcumulada += puntuacionRonda
         
+        print("Finalizando ronda. Vidas restantes: \(estadoJuego.lives)")
         if estadoJuego.lives <= 0 {
+            print("Llamando a mostrarFinJuego con puntuación: \(puntuacionAcumulada)")
             mostrarFinJuego(puntuacion: puntuacionAcumulada)
         } else {
             mostrarResultadoRonda()
@@ -355,32 +371,53 @@ class GameViewController: UIViewController {
     }
     
     func mostrarFinJuego(puntuacion: Int) {
+        print("Mostrando fin de juego con puntuación: \(puntuacion)")
         var records = cargarRecords()
+        print("Records actuales: \(records)")
+        
         if records.count < 5 || puntuacion > records.last!.puntuacion {
+            print("Puntuación entra en el Top 5. Pidiendo nombre...")
             let alerta = UIAlertController(title: "¡Nuevo Récord!", message: "Has entrado en el Top 5 con \(puntuacion) puntos. Ingresa tu nombre:", preferredStyle: .alert)
             alerta.addTextField { textField in
                 textField.placeholder = "Tu nombre"
             }
             let accionGuardar = UIAlertAction(title: "Guardar", style: .default) { _ in
                 let nombre = alerta.textFields?.first?.text ?? "Jugador"
+                print("Guardando récord para \(nombre) con puntuación \(puntuacion)")
                 records.append(Record(nombre: nombre, puntuacion: puntuacion))
                 records.sort { $0.puntuacion > $1.puntuacion }
                 records = Array(records.prefix(5))
                 self.guardarRecords(records)
-                self.navigationController?.popToRootViewController(animated: true)
+                print("Records actualizados: \(records)")
+                self.regresarAlMenuPrincipal()
             }
             let accionCancelar = UIAlertAction(title: "Cancelar", style: .cancel) { _ in
-                self.navigationController?.popToRootViewController(animated: true)
+                print("Usuario canceló el ingreso del nombre")
+                self.regresarAlMenuPrincipal()
             }
             alerta.addAction(accionGuardar)
             alerta.addAction(accionCancelar)
             present(alerta, animated: true)
         } else {
-            let alerta = UIAlertController(title: "Juego Terminado", message: "Te quedaste sin vidas. Rondas alcanzadas: \(estadoJuego.currentRound). Puntuación: \(puntuacion)", preferredStyle: .alert)
+            print("Puntuación no entra en el Top 5. Mostrando mensaje de fin de juego.")
+            let alerta = UIAlertController(title: "Juego Terminado", message: "Te quedaste sin vidas. Rondas alcanzadas: \(self.estadoJuego.currentRound). Puntuación: \(puntuacion)", preferredStyle: .alert)
             alerta.addAction(UIAlertAction(title: "Volver al Menú", style: .default) { _ in
-                self.navigationController?.popToRootViewController(animated: true)
+                self.regresarAlMenuPrincipal()
             })
             present(alerta, animated: true)
+        }
+    }
+    
+    func regresarAlMenuPrincipal() {
+        print("Intentando regresar al menú principal")
+        if let navigationController = navigationController {
+            print("Regresando al menú principal con popToRootViewController")
+            navigationController.popToRootViewController(animated: true)
+        } else {
+            print("No hay navigationController, intentando dismiss")
+            dismiss(animated: true) {
+                print("GameViewController dismissed")
+            }
         }
     }
     
