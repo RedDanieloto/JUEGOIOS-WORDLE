@@ -15,7 +15,7 @@ class WordBank {
         // Palabras de 6 letras
         "CARTEL", "FLORES", "SOMBRA", "PUENTE", "CIEGAS", "MANTEL", "SILLAS", "JARDIN", "CABLES", "FRESAS",
         // Palabras de 7 letras
-        "CAMINOS", "FIESTAS", "SOMBRAS", "PUENTES", "CIEGOS", "MANTLES", "SILLONS", "JARDINS", "CABLESS", "FRESCAS"
+    "CAMINOS", "FIESTAS", "SOMBRAS", "PUENTES", "CIEGOS", "ESTRENO", "NUBLADO", "LOMBRIZ", "SONRISA", "FRESCAS"
     ]
     
     func getRandomWord() -> String {
