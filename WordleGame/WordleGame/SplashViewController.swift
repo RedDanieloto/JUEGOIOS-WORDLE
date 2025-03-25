@@ -2,7 +2,9 @@ import UIKit
 
 class SplashViewController: UIViewController {
     
-    @IBOutlet weak var imagenSplash: UIImageView!
+    
+    @IBOutlet weak var splashImagen: UIImageView!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -11,13 +13,14 @@ class SplashViewController: UIViewController {
     
     func configurarAnimacion() {
         // Configurar estado inicial de la imagen
-        imagenSplash.alpha = 0.0
-        imagenSplash.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+        
+        splashImagen.alpha = 0.0
+        splashImagen.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         
         // Animación: difuminado y escalado
         UIView.animate(withDuration: 2.0, animations: {
-            self.imagenSplash.alpha = 1.0
-            self.imagenSplash.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+            self.splashImagen.alpha = 1.0
+            self.splashImagen.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
         }) { _ in
             // Después de la animación, transicionar al menú
             self.performSegue(withIdentifier: "toMenuSegue", sender: nil)

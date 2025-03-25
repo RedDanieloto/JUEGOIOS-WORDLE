@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="B6A-zp-bLN">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -27,14 +27,15 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="s9e-qt-HpO" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="8dr-ci-6yd"/>
                             <constraint firstItem="s9e-qt-HpO" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="rF0-ov-j79"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="imagenSplash" destination="s9e-qt-HpO" id="IIe-yL-Y6u"/>
-                        <outlet property="splashImageView" destination="s9e-qt-HpO" id="glh-lI-jtB"/>
+                        <outlet property="splashImagen" destination="s9e-qt-HpO" id="Omu-Pj-jGJ"/>
+                        <segue destination="B6A-zp-bLN" kind="presentation" identifier="toMenuSegue" modalPresentationStyle="fullScreen" id="YPl-Gy-zx1"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -612,11 +613,14 @@
         <!--View Controller-->
         <scene sceneID="wBJ-Ve-wzp">
             <objects>
-                <viewController id="B6A-zp-bLN" sceneMemberID="viewController">
+                <viewController id="B6A-zp-bLN" customClass="ViewController" customModule="WordleGame" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="j9j-wo-cYl">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="fondoMenu.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="48n-ba-x3j">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MDh-Cu-LCR">
                                 <rect key="frame" x="32" y="204.5" width="256" height="39.5"/>
                                 <color key="backgroundColor" systemColor="systemGreenColor"/>
@@ -666,11 +670,15 @@
                         <viewLayoutGuide key="safeArea" id="kf2-AO-RZq"/>
                         <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="kf2-AO-RZq" firstAttribute="bottom" secondItem="48n-ba-x3j" secondAttribute="bottom" id="3bF-B3-Q9K"/>
                             <constraint firstItem="JPf-uk-aLO" firstAttribute="top" secondItem="fQB-Hy-ORP" secondAttribute="bottom" constant="20" id="4ez-Yd-plF"/>
+                            <constraint firstItem="48n-ba-x3j" firstAttribute="top" secondItem="kf2-AO-RZq" secondAttribute="top" id="5X5-pd-khc"/>
                             <constraint firstItem="MDh-Cu-LCR" firstAttribute="width" secondItem="j9j-wo-cYl" secondAttribute="width" multiplier="0.8" id="7aR-JQ-ItS"/>
                             <constraint firstItem="Gss-3G-tRL" firstAttribute="leading" secondItem="j9j-wo-cYl" secondAttribute="leading" id="DY8-mw-zd9"/>
+                            <constraint firstItem="kf2-AO-RZq" firstAttribute="trailing" secondItem="48n-ba-x3j" secondAttribute="trailing" id="EWe-iF-EIH"/>
                             <constraint firstItem="JPf-uk-aLO" firstAttribute="height" secondItem="j9j-wo-cYl" secondAttribute="height" multiplier="0.07" id="FrO-Ij-6C9"/>
                             <constraint firstItem="fQB-Hy-ORP" firstAttribute="centerX" secondItem="j9j-wo-cYl" secondAttribute="centerX" id="Jga-Xf-oeQ"/>
+                            <constraint firstItem="48n-ba-x3j" firstAttribute="leading" secondItem="kf2-AO-RZq" secondAttribute="leading" id="MAz-y3-fSa"/>
                             <constraint firstItem="Gss-3G-tRL" firstAttribute="centerX" secondItem="j9j-wo-cYl" secondAttribute="centerX" id="QMR-za-G3p"/>
                             <constraint firstItem="fQB-Hy-ORP" firstAttribute="centerY" secondItem="j9j-wo-cYl" secondAttribute="centerY" id="SXM-Ky-wJR"/>
                             <constraint firstItem="fQB-Hy-ORP" firstAttribute="width" secondItem="j9j-wo-cYl" secondAttribute="width" multiplier="0.8" id="cdu-1T-rI2"/>
@@ -684,10 +692,11 @@
                             <constraint firstItem="JPf-uk-aLO" firstAttribute="width" secondItem="j9j-wo-cYl" secondAttribute="width" multiplier="0.8" id="wQL-BH-lrR"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="9mz-au-fIW"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zdq-Rl-fTR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1603" y="-14"/>
+            <point key="canvasLocation" x="1602.9850746268655" y="-14.416475972540045"/>
         </scene>
         <!--Instructions View Controller-->
         <scene sceneID="Y9h-wb-mdG">
@@ -865,6 +874,7 @@
                                 <rect key="frame" x="112" y="237" width="96" height="96"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="KlA-eC-JCh" secondAttribute="height" id="MhJ-oH-cXM"/>
+                                    <constraint firstAttribute="width" secondItem="KlA-eC-JCh" secondAttribute="height" id="vtA-bN-mi8"/>
                                 </constraints>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="WhatsApp Image 2025-03-21 at 14.51.35.jpeg" translatesAutoresizingMaskIntoConstraints="NO" id="6PS-zx-lX7">
@@ -919,7 +929,6 @@
                             <constraint firstItem="ROr-ye-KSq" firstAttribute="top" secondItem="cXn-1l-hWq" secondAttribute="bottom" id="aWO-3D-w7x"/>
                             <constraint firstItem="K68-tp-Isi" firstAttribute="top" secondItem="6PS-zx-lX7" secondAttribute="bottom" id="blV-J5-j8M"/>
                             <constraint firstItem="ROr-ye-KSq" firstAttribute="width" secondItem="61D-qD-c8Q" secondAttribute="width" multiplier="0.3" id="dyY-1f-bxu"/>
-                            <constraint firstItem="KlA-eC-JCh" firstAttribute="width" secondItem="KlA-eC-JCh" secondAttribute="height" id="vtA-bN-mi8"/>
                             <constraint firstItem="cXn-1l-hWq" firstAttribute="leading" secondItem="61D-qD-c8Q" secondAttribute="leading" id="vxy-HW-aOY"/>
                         </constraints>
                     </view>
@@ -939,15 +948,16 @@
         <image name="corazon.png" width="899.25" height="899.25"/>
         <image name="delete.backward" catalog="system" width="128" height="102"/>
         <image name="figure.walk.triangle.fill" catalog="system" width="128" height="109"/>
+        <image name="fondoMenu.jpg" width="506" height="900"/>
         <image name="rectangle.portrait.and.arrow.right" catalog="system" width="128" height="109"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemPinkColor">
-            <color red="1" green="0.17647058823529413" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

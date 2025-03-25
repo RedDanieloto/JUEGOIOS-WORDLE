@@ -102,6 +102,7 @@ class GameViewController: UIViewController {
     @objc func salirDelJuego() {
         temporizador?.invalidate()
         reproductorMusicaFondo?.pause()
+        MusicaManager.shared.iniciarMusica()
         if let navigationController = navigationController {
             navigationController.popToRootViewController(animated: true)
         } else {
@@ -112,6 +113,7 @@ class GameViewController: UIViewController {
     func iniciarNuevoJuego(restablecerVidas: Bool = true, restablecerRonda: Bool = true) {
         let vidasActuales = estadoJuego?.lives ?? 3
         let rondaActual = estadoJuego?.currentRound ?? 1
+        MusicaManager.shared.detenerMusica()
         
         estadoJuego = GameState()
         if !restablecerVidas {
