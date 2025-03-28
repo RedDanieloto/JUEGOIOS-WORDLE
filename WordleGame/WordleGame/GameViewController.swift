@@ -284,9 +284,29 @@ class GameViewController: UIViewController {
     }
     
     func finalizarRonda() {
+        
+        //aqui puedo configurar la puntuacion para q no suba cada q se finaliza la ronda
+        
+        
         temporizador?.invalidate()
-        let puntuacionRonda = (estadoJuego.timeRemaining * 10) + (estadoJuego.currentRound * 100)
+        
+        
+        print("vidas:")
+        print(estadoJuego.lives)
+        
+        print("Estado del juego:")
+        print(estadoJuego.didWinRound)
+        
+        // puedo hacer q la puntiacion acumulada no llegue a cero y cada q finalice ronda si gano le sume puntos, si perdio q reste puntos sin pasarse a los negativos
+        var puntuacionRonda = 0
+        if(estadoJuego.didWinRound){//si gano se suma puntos segun la ronda actual
+            puntuacionRonda = (estadoJuego.timeRemaining * 10) + (estadoJuego.currentRound * 100)
+        }else{
+            puntuacionRonda = -(estadoJuego.timeRemaining * 10) + -(estadoJuego.currentRound * 100)
+        }
+   
         puntuacionAcumulada += puntuacionRonda
+        
         
         if estadoJuego.lives <= 0 {
             mostrarFinJuego(puntuacion: puntuacionAcumulada)
@@ -300,20 +320,21 @@ class GameViewController: UIViewController {
         if estadoJuego.didWinRound {
             mensaje = "¡Ganaste la ronda!"
             estadoJuego.currentRound += 1
-            iniciarNuevoJuego(restablecerVidas: false, restablecerRonda: false)
-            configurarTablero()
-            iniciarTemporizador()
-            actualizarInterfaz()
         } else {
             mensaje = "Perdiste la ronda. La palabra era: \(estadoJuego.wordOfTheRound)"
-            iniciarNuevoJuego(restablecerVidas: false, restablecerRonda: false)
-            configurarTablero()
-            iniciarTemporizador()
-            actualizarInterfaz()
         }
         
         let alerta = UIAlertController(title: "Ronda \(estadoJuego.currentRound)", message: mensaje, preferredStyle: .alert)
-        alerta.addAction(UIAlertAction(title: "Continuar", style: .default, handler: nil))
+        alerta.addAction(UIAlertAction(title: "Continuar", style: .default, handler: { resp in
+            //respuesta al darle continuar cuando pierde la partida o gana
+            if(resp.isEnabled){
+                print("Se presiono el boton de continuar")
+                self.iniciarNuevoJuego(restablecerVidas: false, restablecerRonda: false)
+                self.configurarTablero()
+                self.iniciarTemporizador()
+                self.actualizarInterfaz()
+            }
+        }))
         present(alerta, animated: true)
     }
     
@@ -409,18 +430,29 @@ class GameViewController: UIViewController {
         
         for (boton, letra) in botones {
             var estado: LetterState = .unknown
-            for intento in estadoJuego.guesses where !intento.letters.allSatisfy({ $0.state == .unknown }) {
-                if let estadoLetra = intento.letters.first(where: { $0.character == letra })?.state {
-                    if estadoLetra == .correct {
+
+            
+            for intento in estadoJuego.guesses where !intento.letters.allSatisfy({ $0.state == .unknown }){
+                
+                for letter in intento.letters where letter.character == letra{
+                    if letter.state == .correct{
                         estado = .correct
                         break
-                    } else if estadoLetra == .present && estado != .correct {
+                    } else if letter.state == .present && estado != .correct{
                         estado = .present
-                    } else if estadoLetra == .absent && estado == .unknown {
+                    } else if letter.state == .absent && estado != .present{
+                        print("La letra \(letra) no esta en la palabra")
                         estado = .absent
                     }
                 }
+                
+                if estado == .correct{
+                    break
+                }
+                
             }
+            
+            
             switch estado {
             case .correct:
                 boton?.backgroundColor = .systemGreen

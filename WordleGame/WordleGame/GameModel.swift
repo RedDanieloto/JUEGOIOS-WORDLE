@@ -34,6 +34,7 @@ class GameState {
     var timeRemaining: Int = 60 // 60 segundos por ronda
     var isGameOver: Bool = false
     var didWinRound: Bool = false
+    var currentIntent: [String: String] = [:]
     
     init() {
         self.wordLength = WordBank.shared.getRandomWordLength()
@@ -51,8 +52,9 @@ class GameState {
     
     func evaluateGuess(guess: String) -> [Letter] {
         let guessArray = Array(guess.uppercased())
-        let targetArray = Array(wordOfTheRound)
+        let targetArray = Array(wordOfTheRound.uppercased())
         var result: [Letter] = []
+        
         
         // Contar las letras en la palabra objetivo
         var targetLetterCount = [Character: Int]()
@@ -60,19 +62,37 @@ class GameState {
             targetLetterCount[char, default: 0] += 1
         }
         
-        // Evaluar cada letra
+        // Marcar primero las verdes
         for i in 0..<guessArray.count {
             let char = guessArray[i]
-            if char == targetArray[i] {
+            if char == targetArray[i] && targetLetterCount[char]! > 0 {
+                currentIntent[String(char)] = "correct" // Cambiado a LetterState
                 result.append(Letter(character: String(char), state: .correct))
                 targetLetterCount[char]! -= 1
-            } else if targetLetterCount[char] != nil && targetLetterCount[char]! > 0 {
-                result.append(Letter(character: String(char), state: .present))
-                targetLetterCount[char]! -= 1
             } else {
-                result.append(Letter(character: String(char), state: .absent))
+                currentIntent[String(char)] = "unknown" // Cambiado a LetterState
+                result.append(Letter(character: String(char), state: .unknown))
             }
         }
+        
+        // Marcar amarillas y ausentes
+        for i in 0..<guessArray.count {
+            let char = guessArray[i]
+            if(result[i].state == .unknown){
+                if let count = targetLetterCount[char], count > 0 {
+                    currentIntent[String(char)] = "present" // Cambiado a LetterState
+                    result[i].state = .present
+                    targetLetterCount[char]! -= 1
+                } else {
+                    currentIntent[String(char)] = "absent" // Cambiado a LetterState
+                    result[i].state = .absent
+                }
+            }
+        }
+        
+        // Verificar cómo quedó el estado del intento
+        print(currentIntent) // Aquí ves el estado de cada letra
+       
         
         return result
     }
